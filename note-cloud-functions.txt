@@ -1,0 +1,63 @@
+https://firebase.google.com/docs/functions/local-emulator
+https://firebase.google.com/docs/functions/config-env
+=================================================================================================
+
+Google Cloud Functions only supports nodejs v6.11.1 for now
+
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+
+nvm install 6.11.1
+=================================================================================================
+Edit this bindHost
+
+~/.config/configstore/@google-cloud/functions-emulator/config.json
+{                                                                                                                                                                                 
+  "bindHost": "0.0.0.0"
+}
+
+=================================================================================================
+env variables
+
+firebase functions:config:set amm.host="https://dev.maximreview.party"
+firebase functions:config:unset amm.host
+
+
+
+=================================================================================================
+This is not required/Just kept for ref later
+
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+
+put following line into .bashrc
+export PATH=~/.npm-global/bin:$PATH
+=================================================================================================
+
+
+If you're upgrading @google-cloud/functions-emulator, these
+are the recommended upgrade steps:
+
+1.  Stop the currently running emulator, if any:
+
+        functions stop
+
+2.  Uninstall the current emulator, if any:
+
+        npm uninstall -g @google-cloud/functions-emulator
+
+3.  Install the new version of the emulator:
+
+        npm install -g @google-cloud/functions-emulator
+
+If you have trouble after upgrading, try deleting the config
+directory found in:
+
+    ~/.config/configstore/@google-cloud/functions-emulator
+
+Then restart the emulator. You can also check for any renegade
+Node.js emulator processes that may need to be killed:
+
+    ps aux | grep node
+
++ firebase-tools@3.17.3
+added 647 packages in 33.728s

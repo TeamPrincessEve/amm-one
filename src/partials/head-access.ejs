@@ -1,0 +1,18 @@
+<script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
+<script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
+
+<script id="amp-access" type="application/json">
+  {
+      "authorization": "/account/authorization?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
+      "pingback": "/account/pingback?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
+      "login": {
+        "sign-in": "/account/login?rid=READER_ID&url=CANONICAL_URL",
+        "sign-out": "/account/logout"
+      },
+      "authorizationFallbackResponse": {
+          "error": true,
+          "access": false,
+          "subscriber": false
+      }
+  }
+</script>

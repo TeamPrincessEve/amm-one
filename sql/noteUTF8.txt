@@ -1,0 +1,98 @@
+psql:sql/createdb.sql:3: ERROR:  new encoding (UTF8) is incompatible with the encoding of the template database (SQL_ASCII)
+HINT:  Use the same encoding as in the template database, or use template0 as template.
+
+//------------------------------------------
+//in c9 just this enougn for create db as same as on heroku
+locale -a
+
+locale-gen en_US.UTF-8
+locale-gen th_TH.UTF-8
+
+locale -a
+
+CREATE DATABASE c2amp WITH ENCODING 'UTF8' LC_COLLATE='en_US.utf8' LC_CTYPE='en_US.utf8' TEMPLATE=template0;
+select * from pg_collation;
+CREATE COLLATION "th_TH.utf8" (locale = 'th_TH.utf8');
+CREATE COLLATION "en_US.utf8" (locale = 'en_US.utf8');
+select * from pg_collation where collname like '%th%';
+
+SAMPLE
+CREATE TABLE testaccount (testaccount_id SERIAL PRIMARY KEY, user_name VARCHAR(50), name VARCHAR(50));
+select * from testaccount order by user_name collate "th_TH.utf8";
+select * from testaccount order by user_name collate "C";
+//check more sample from testdata.sql
+
+
+CREATE DATABASE c2amp WITH ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;
+CREATE DATABASE c2amp WITH ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;
+//------------------------------------------
+
+
+postgres=# UPDATE pg_database SET datistemplate = FALSE WHERE datname = 'template1';
+postgres=# DROP DATABASE template1;
+postgres=# CREATE DATABASE template1 WITH TEMPLATE = template0 ENCODING = 'UNICODE';
+postgres=# UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template1';
+postgres=# \c template1
+postgres=# VACUUM FREEZE;
+postgres=# UPDATE pg_database SET datallowconn = FALSE WHERE datname = 'template1';
+postgres=# \q
+
+
+CREATE DATABASE c2amp WITH ENCODING 'UNICODE' LC_COLLATE='th_TH.UTF-8' LC_CTYPE='th_TH.UTF-8' TEMPLATE=template0;
+
+//------------------------------------------
+//this from heroku
+
+d13j39dufpdmsf | nrkavglezlikxi | UTF8     | en_US.UTF-8 | en_US.UTF-8 | nrkavglezlikxi=CTc/nrkavglezlikxi
+
+//------------------------------------------
+
+CREATE TABLE new_table (
+    foo varchar COLLATE "sv_SE.UTF-8",
+    bar varchar COLLATE "sv_SE.UTF-8"
+);
+
+ALTER TABLE existing_table ALTER COLUMN baz TYPE varchar COLLATE "sv_SE.UTF-8";
+
+select * from pg_collation;
+
+
+sudo apt-get install language-pack-en
+
+~/.bashrc
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+
+less /usr/share/i18n/SUPPORTED | grep th
+
+//----------------------------------------------
+
+
+The length limit imposed by varchar(N) types and calculated by the length function is in characters, not bytes. So 'abcdef'::char(3) is truncated to 'abc' but 'a€cdef'::char(3) is truncated to 'a€c', even in the context of a database encoded as UTF-8, where 'a€c' is encoded using 5 bytes.
+
+If restoring a dump file complained that 'Mér' would not go into a varchar(3) column, that suggests you were restoring a UTF-8 encoded dump file into a SQL_ASCII database.
+
+For example, I did this in a UTF-8 database:
+
+create schema so4249745;
+create table so4249745.t(key varchar(3) primary key);
+insert into so4249745.t values('Mér');
+
+And then dumped this and tried to load it into a SQL_ASCII database:
+
+pg_dump -f dump.sql --schema=so4249745 --table=t
+createdb -E SQL_ASCII -T template0 enctest
+psql -f dump.sql enctest
+
+And sure enough:
+
+psql:dump.sql:34: ERROR:  value too long for type character varying(3)
+CONTEXT:  COPY t, line 1, column key: "Mér"
+
+By contrast, if I create the database enctest as encoding LATIN1 or UTF8, it loads fine.
+
+This problem comes about because of a combination of dumping a database with a multi-byte character encoding, and trying to restore it into a SQL_ASCII database. Using SQL_ASCII basically disables the transcoding of client data to server data and assumes one byte per character, leaving it to the clients to take responsibility for using the right character map. Since the dump file contains the stored string as UTF-8, that is four bytes, so a SQL_ASCII database sees that as four characters, and therefore regards it as violating the constraint. And it prints out the value, which my terminal then reassembles as three characters.
+
+//-------------------------------------------
+

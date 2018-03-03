@@ -1,0 +1,42 @@
+heroku pg:info
+
+heroku pg:psql
+
+psql
+\c dbname
+
+\conninfo
+
+\i sql/testdata.sql
+
+\l
+
+\d
+
+\d+
+
+\q
+
+pg_dump --schema-only c2amp > c2schema.db
+
+pg_dump --table=export_table --data-only c2amp > c2data.db
+
+psql --set ON_ERROR_STOP=on c2ampV2 < c2data.db
+
+SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';
+
+SELECT * FROM pg_database d JOIN pg_user u ON (d.datdba = u.usesysid) WHERE d.datname = (SELECT current_database());
+
+-- get table owner
+select t.table_name, t.table_type, c.relname, c.relowner, u.usename
+from information_schema.tables t
+join pg_catalog.pg_class c on (t.table_name = c.relname)
+join pg_catalog.pg_user u on (c.relowner = u.usesysid)
+where t.table_schema='public';
+
+SELECT sum(idx_blks_read) as idx_read, sum(idx_blks_hit) as idx_hit, (sum(idx_blks_hit) - sum(idx_blks_read)) / nullif(sum(idx_blks_hit), 0) as ratio
+FROM pg_statio_user_indexes;
+
+SELECT relname, 100 * idx_scan / nullif((seq_scan + idx_scan), 0) percent_of_times_index_used, n_live_tup rows_in_table
+FROM pg_stat_user_tables ORDER BY n_live_tup DESC;
+

@@ -1,0 +1,98 @@
+.button,
+button,
+input[type='button'],
+input[type='submit']
+	font-family: inherit
+	font-weight: inherit
+	font-size: inherit
+	background-color: $color-button
+	border: .1rem solid $color-button
+	border-radius: .4rem
+	color: $color-txt-accent-on-dark
+	cursor: pointer
+	display: inline-block
+	height: 3.8rem
+	letter-spacing: .1rem
+	line-height: 3.6rem
+	padding: 0 3rem
+	text-align: center
+	text-decoration: none
+	text-transform: uppercase
+	white-space: nowrap
+
+	&:focus,
+	&:hover
+		+transition(background-color, $transition-duration, ease-in-out)
+		background-color: $color-button-accent
+		border-color: $color-button-accent
+		outline: 0
+
+	&[disabled]
+		cursor: default
+		opacity: .5
+
+		&:focus,
+		&:hover
+			background-color: $color-button
+			border-color: $color-button
+
+	&.button-outline
+		background-color: transparent
+		color: $color-button
+
+		&:focus,
+		&:hover
+			background-color: transparent
+			border-color: $color-button-accent
+			color: $color-button-accent
+
+		&[disabled]
+
+			&:focus,
+			&:hover
+				border-color: $color-button
+				color: $color-button
+
+	&.button-clear
+		background-color: transparent
+		border-color: transparent
+		color: $color-button
+
+		&:focus,
+		&:hover
+			background-color: transparent
+			border-color: transparent
+			color: $color-button-accent
+
+		&[disabled]
+
+			&:focus,
+			&:hover
+				color: $color-button
+
+.button-negative
+	color: $color-txt-accent-on-light
+	background-color: $color-button-negative
+	border-color: $color-button-negative
+	&:focus,
+	&:hover
+		+transition(background-color, $transition-duration, ease-in-out)
+		background-color: $color-button-negative-accent
+		border-color: $color-button-negative-accent
+		color: $color-txt-accent-on-dark
+		
+div[role=button]
+	cursor: pointer
+	
+.button-catch-eye
+	//background-color: #eb6e80 #f53240 #c43235 #252839 #A22A65
+	// background-color: $color-button-accent
+	// border-color: $color-button-accent
+	background-color: $color-navy
+	border-color: $color-navy
+	// &:focus,
+	// &:hover
+	// 	+transition(background-color, $transition-duration, ease-in-out)
+	// 	background-color: #5e0231
+	// 	border-color: #5e0231
+		//#FF4136

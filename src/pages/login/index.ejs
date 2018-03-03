@@ -1,0 +1,82 @@
+---
+layout: main
+---
+
+<div id="firebaseui-auth-container"></div>
+
+<div class="ct">
+
+<div class="r mt10"><div class="c">
+<div class="fcenter tac">
+    <h3>
+    ค้นหาช่าง&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;ช่างหางาน
+    </h3>
+    <input type="text" id="kw">
+    <input type="submit" value="ค้นหา" id="btSearch">
+</div>
+</div></div>
+
+<div class="r"><div class="c">
+<div class="fcenter-big tac">
+<a href="/search?kw=ซ่อมปั๊มน้ำ" target="_top">ซ่อมปั๊มน้ำ</a>
+ | <a href="/search?kw=ต่อเติม" target="_top">ต่อเติม</a>
+ <!--| <a href="/search?kw=ช่างก่อสร้าง" target="_top">ช่างก่อสร้าง</a>-->
+ <!--| <a href="{{weblink}}" target="_blank">ทำโรงรถ</a>-->
+ <!--| <a href="{{weblink}}" target="_blank">ซ่อมเกียร์ออโต รถยนต์</a>-->
+ <!--| <a href="{{weblink}}" target="_blank">ซ่อมคอม</a>-->
+ <!--| <a href="{{weblink}}" target="_blank">ล้างแอร์บ้าน</a>-->
+</div>
+</div></div>
+
+<div class="r"><div class="c">
+<div class="mt5 mb10">
+
+    <ul class="gallery" style="width:auto;height:500px;" id="clr"></ul>
+<!--       <div overflow role="button" aria-label="Show more" class="float-right">
+        Show more
+      </div> -->
+
+</div>
+</div></div>
+
+</div>
+
+<script>
+function ccsearch() {
+  var kw = document.getElementById("kw").value;
+  firebase.database().ref('cclist').once('value').then(function(snapshot) {
+    var cl = snapshot.val();
+    for (var al in cl) {
+      if (cl.hasOwnProperty(al)) {
+        var cll = cl[al];
+        var clr = document.getElementById("clr");
+        var li = document.createElement("li");
+        li.className = "search-list";
+        var lis = '<h4>'+cll['name']+'</h4><hr/>';
+        var weblink = cll['weblink'];
+        if (weblink) lis += '<a href="'+weblink+'" target="_blank">'+weblink+'</a>';
+        lis += '<p>'+cll['description']+'</p><hr/><p>'+cll['contact_info']+'</p>';
+        li.innerHTML = lis;
+        clr.appendChild(li);
+      }
+    }
+  });
+}
+window.onload = function() {
+  document.getElementById("btSearch").addEventListener("click", function(){ccsearch()});
+  
+// document.getElementById('file').addEventListener('change', handleFileSelect, false);
+// document.getElementById('file').disabled = true;
+// auth.onAuthStateChanged(function(user) {
+// if (user) {
+// console.log('Anonymous user signed-in.', user);
+// document.getElementById('file').disabled = false;
+// } else {
+// console.log('There was no anonymous session. Creating a new anonymous user.');
+// // Sign the user in anonymously since accessing Storage requires the user to be authorized.
+// auth.signInAnonymously();
+// }
+// });
+  
+}
+</script>

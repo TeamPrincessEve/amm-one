@@ -1,0 +1,62 @@
+
+
+Assuming this table:
+
+CREATE TABLE students 
+( 
+  student_id SERIAL PRIMARY KEY,
+  player_name TEXT
+);
+
+There are four different ways to define a foreign key (when dealing with a single column PK) and they all lead to the same foreign key constraint:
+
+    Inline without mentioning the target column:
+
+    CREATE TABLE tests 
+    ( 
+       subject_id SERIAL,
+       subject_name text,
+       highestStudent_id integer REFERENCES students
+    );
+
+    Inline with mentioning the target column:
+
+    CREATE TABLE tests 
+    ( 
+       subject_id SERIAL,
+       subject_name text,
+       highestStudent_id integer REFERENCES students (student_id)
+    );
+
+    Out of line inside the create table:
+
+    CREATE TABLE tests 
+    ( 
+      subject_id SERIAL,
+      subject_name text,
+      highestStudent_id integer, 
+      constraint fk_tests_students
+         foreign key (highestStudent) 
+         REFERENCES students (student_id)
+    );
+
+    As a separate alter table statement:
+
+    CREATE TABLE tests 
+    ( 
+      subject_id SERIAL,
+      subject_name text,
+      highestStudent_id integer
+    );
+
+    alter table tests 
+        add constraint fk_tests_students
+        foreign key (highestStudent) 
+        REFERENCES students (student_id);
+
+Which one you prefer is a matter of taste. But you should be consistent in your scripts. The last two statements are the only option if you have foreign keys referencing a PK that consists of more than one column - you can't define the FK "inline" in that case, e.g. foreign key (a,b) references foo (x,y)
+
+Only version 3) and 4) will give you the ability to define your own name for the FK constraint if you don't like the system generated ones from Postgres.
+
+The serial data type is not really a data type. It's just a short hand notation that defines a default value for the column taken from a sequence. So any column referencing a column defined as serial must be defined using the appropriate base type integer (or bigint for bigserial columns)
+

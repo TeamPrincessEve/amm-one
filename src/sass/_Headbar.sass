@@ -1,0 +1,60 @@
+.headbar
+    position: fixed
+    top: 0
+    width: 100%
+    z-index: 10
+    height: 80px
+    background-color: $color-bg-accent
+    border-bottom: 1px solid $color-gray
+.profile-menu
+  visibility: hidden
+  width: 300px
+  height: 250px
+  background-color: $color-bg-accent
+  color: #000
+  text-align: center
+  border-radius: 6px
+  padding: 8px 0
+  position: absolute
+  z-index: 100
+  top: 84px
+  right: 20px
+.profile-menu::after
+  content: ""
+  position: absolute
+  bottom: 100%
+  right: 9%
+  margin-left: -5px
+  border-width: 7px
+  border-style: solid
+  border-color: transparent transparent $color-bg-accent transparent
+#profile-menu-overlay
+  display: none
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  z-index: 1
+  background-color: rgba(0,0,0,0.4)
+.profile-thumb
+  border-radius: 50%
+  background-color: gray
+  cursor: pointer
++keyframes(fadeIn)
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+#profile-thumb:checked ~ .profile-menu
+  visibility: visible
+  -webkit-animation: fadeIn 1.5s
+  animation: fadeIn 1.5s
+#profile-thumb:checked ~ #profile-menu-overlay
+  display: block
+  -webkit-animation: fadeIn 1s
+  animation: fadeIn 1s
+.profile-pic
+  border-radius: 50%
+  background-color: gray
+  
